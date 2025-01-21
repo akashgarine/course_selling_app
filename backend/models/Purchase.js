@@ -7,4 +7,4 @@ const purchaseSchema= new mongoose.Schema({
     creatorId: mongoose.Types.ObjectId
 })
 
-mongoose.export=mongoose.model("purchase",purchaseSchema);
+mongoose.exports=mongoose.model("purchase",purchaseSchema);

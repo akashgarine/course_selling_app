@@ -5,11 +5,52 @@ const {JWT_ADMIN_SECRET}=require("../config");
 const jwt=require("jsonwebtoken");
 const adminMiddleware=require("../middlewares/adminMiddleware");
 const bcrypt = require("bcrypt");
-const User = require("../models/User");
+const Course=require("../models/Course");
 
 
-router.post("/courses",adminMiddleware,function(req,res) {
-    console.log("hi");
+router.post("/courses",adminMiddleware,async function(req,res) {
+    const adminId=req.userId;
+    console.log(typeof adminId);
+     const {title,description,price,imageURL}=req.body;
+     try{
+            const newCourse= new Course({
+                title:title,
+                description:description,
+                price:price,
+                imageURL:imageURL,
+                creatorId :adminId,
+            });
+            await newCourse.save();
+            return res.status(200).json({message:'Course added successfully',
+                courseId:newCourse._id}); 
+
+     }
+     catch(error){
+         res.status(500).json({message:'Error adding course',error});
+     }
+});
+router.put("/courses",adminMiddleware,async function(req,res) {
+    const adminId=req.userId;
+    console.log(typeof adminId);
+     const {title,description,price,imageURL,courseId}=req.body;
+     try{
+            const newCourse=await Course.updateOne({
+                _id:courseId,
+                creatorId:adminId},
+                {
+                title:title,
+                description:description,
+                price:price,
+                imageURL:imageURL,
+                creatorId :adminId,
+            });
+            return res.status(200).json({message:'Course updated successfully',
+                courseId:newCourse._id}); 
+
+     }
+     catch(error){
+         res.status(500).json({message:'Error adding course',error});
+     }
 });
 
 router.post("/signup",async function(req,res){
@@ -50,6 +91,19 @@ router.post("/signin",async function(req,res){
     catch(error){
         return res.status(500).json({message:'Error logging user', error });
     }
+});
+router.get("/courses/bulk",adminMiddleware,async function(req,res) {
+    const adminId=req.userId;
+     try{
+            const yourCourses=await Course.find({creatorId:adminId});
+
+            return res.status(200).json({message:' your Courses successfully',
+                courses:yourCourses}); 
+
+     }
+     catch(error){
+         res.status(500).json({message:'Error adding course',error});
+     }
 });
 
 

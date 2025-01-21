@@ -1,7 +1,4 @@
 const mongoose =require("mongoose");
-
-
-
 const courseSchema= new mongoose.Schema({
     title:String,
     description:String,
@@ -10,4 +7,4 @@ const courseSchema= new mongoose.Schema({
     creatorId: mongoose.Types.ObjectId
 })
 
-mongoose.export=mongoose.model("course",courseSchema);
+module.exports=mongoose.model("course",courseSchema);
