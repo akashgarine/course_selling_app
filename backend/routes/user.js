@@ -1,9 +1,11 @@
 const express=require("express");
-const User=require("../models/User"); 
+const User=require("../models/User");
+const Course=require("../models/Course"); 
 const router =express.Router();
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
 const {JWT_USER_SECRET}=require("../config");
+const userMiddleware=require("../middlewares/userMiddleware");
 
 router.post("/signup",async function(req,res){
     const {email,password,firstname ,lastname}=req.body;
@@ -44,7 +46,14 @@ router.post("/signin",async function(req,res){
     }
 });
 
-router.get("/users",async function(req,res){
+router.get("/courses", userMiddleware, async function(req,res){
+    try{
+        const courses= await Course.find();
+        res.status(200).json({message:'Courses fetched successfully',courses});
+    }
+    catch(error){
+        res.status(500).json({message:'Error fetching courses',error});
+    }
 });
 
 module.exports=router;
