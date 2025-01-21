@@ -3,10 +3,10 @@ const User=require("../models/User");
 const router =express.Router();
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
-const JWT_SECRET="swttt"
+const {JWT_USER_SECRET}=require("../config");
+
 router.post("/signup",async function(req,res){
     const {email,password,firstname ,lastname}=req.body;
-    console.log(req.body);
     const hashedpassword=await bcrypt.hash(password,5);
     try{
         const newUser=new User({
@@ -25,7 +25,7 @@ router.post("/signup",async function(req,res){
 
 router.post("/signin",async function(req,res){
     const {email,password}=req.body;
-    console.log(email);
+   
     try{
         const user=await User.findOne({email});console.log(user);
         if (!user) {
@@ -35,7 +35,8 @@ router.post("/signin",async function(req,res){
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
-        const token=jwt.sign({id:user._id},JWT_SECRET, { expiresIn: '1h' });
+        const token=jwt.sign({
+            id:user._id},JWT_USER_SECRET, { expiresIn: '1h' });
         return res.json({ token, userId: user._id, message: 'User logged in' });
     }
     catch(error){

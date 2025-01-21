@@ -4,12 +4,13 @@ const cors=require("cors");
 
 const app=express();
 
+require('dotenv').config();
 app.use(express.json());
 app.use(cors());
 
 async function main(){
     try{
-        await mongoose.connect('');
+        await mongoose.connect(process.env.MONGO_URL); 
         console.log("DataBase connected");
     }
     catch(e){
